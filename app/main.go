@@ -1,3 +1,6 @@
+//go:build linux
+// +build linux
+
 package main
 
 import (
@@ -79,9 +82,21 @@ func main() {
 	}
 
 	cmd := exec.Command(command, args...)
+
+	// we need to guard the processs tree so the program we're running
+	// is only able to see the process tree that we want it to see.
+	// to do that, we'll use PID namespaces to ensure the program
+	// has its own process tree. The process being executed must see itself as PID 1.
+
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
+
+	cmd.Env = []string{"PID1=-[ns-process]- # "}
+
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Cloneflags: syscall.CLONE_NEWPID,
+	}
 
 	err = cmd.Run()
 	if err != nil {
