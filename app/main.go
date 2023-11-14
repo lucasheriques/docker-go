@@ -106,13 +106,13 @@ func getRegistryAuthToken(image string) string {
 		os.Exit(1)
 	}
 
-	fmt.Println(fmt.Sprintf("token: %s", tokenResponse.Token))
+	// fmt.Println(fmt.Sprintf("token: %s", tokenResponse.Token))
 
 	return tokenResponse.Token
 }
 
 func getImageManifest(token, image, version string) *Manifest {
-	fmt.Println(fmt.Sprintf(getManifestURL, image, version))
+	// fmt.Println(fmt.Sprintf(getManifestURL, image, version))
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf(getManifestURL, image, version), nil)
 	if err != nil {
 		handleError("Error when creating request", err)
@@ -132,7 +132,7 @@ func getImageManifest(token, image, version string) *Manifest {
 	}
 	defer res.Body.Close()
 
-	fmt.Printf("resBody: %s\n", resBody)
+	// fmt.Printf("resBody: %s\n", resBody)
 
 	var manifest Manifest
 
@@ -187,11 +187,11 @@ func getImageFromRegistry(image, version, path string) {
 		layerNames = append(layerNames, layerName)
 	}
 
-	printCurrentFilesInDir()
+	// printCurrentFilesInDir()
 
-	fmt.Printf("Layer names: %v\n", layerNames)
+	// fmt.Printf("Layer names: %v\n", layerNames)
 
-	fmt.Printf("Path: %s\n", path)
+	// fmt.Printf("Path: %s\n", path)
 
 	// check permissions for target directory
 	err := os.MkdirAll(path, 0777)
@@ -200,15 +200,15 @@ func getImageFromRegistry(image, version, path string) {
 	}
 
 	for _, layerName := range layerNames {
-		fmt.Printf("Layer name: %s\n", layerName)
+		// fmt.Printf("Layer name: %s\n", layerName)
 
-		info, err := os.Stat(layerName)
+		_, err := os.Stat(layerName)
 		if err != nil {
 			fmt.Println("Error when getting file info:", err)
 			return
 		}
 
-		fmt.Println("File permissions:", info.Mode())
+		// fmt.Println("File permissions:", info.Mode())
 
 		err = extractTar(layerName, path)
 		if err != nil {
@@ -216,7 +216,7 @@ func getImageFromRegistry(image, version, path string) {
 		}
 	}
 
-	printCurrentFilesInDir()
+	// printCurrentFilesInDir()
 }
 
 func printCurrentFilesInDir() {
